@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPIO 使用 &mdash; i.MX Manual v1 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="LED 使用" href="driver_led.html" />
+    <link rel="prev" title="升级固件" href="upgrade_firmware.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> i.MX Manual
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">上手教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="start.html">入手指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="serial_debugging.html">串口调试</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_firmware.html">升级固件</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">驱动开发</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GPIO 使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">GPIO 状态</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">控制单个 GPIO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">内核设备树 GPIO 配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pin">pin 定义文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">在设备树中配置GPIO</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="driver_led.html">LED 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_i2c.html">I2C 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_bt.html">BLUETOOTH 使用</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">i.MX Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>GPIO 使用</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/driver_gpio.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gpio">
+<h1>GPIO 使用<a class="headerlink" href="#gpio" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>GPIO 状态<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p>通过command可以后去系统gpio的利用状态，如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>root@imx8mmevk:/# cat /sys/kernel/debug/gpio 
+gpiochip0: GPIOs 0-31, parent: platform/30200000.gpio, 30200000.gpio:
+ gpio-5   (                    |lt9611-irq-gpio     ) in  hi IRQ
+ gpio-6   (                    |lt9611-reset-gpio   ) out hi    
+ gpio-8   (                    |gpio_lte_pwr_off    ) out hi    
+ gpio-9   (                    |radio on            ) out hi    
+ gpio-14  (                    |PCIe CLKREQ         ) out lo    
+ gpio-15  (                    |cd                  ) in  hi IRQ
+
+gpiochip1: GPIOs 32-63, parent: platform/30210000.gpio, 30210000.gpio:
+ gpio-38  (                    |?                   ) out hi    
+ gpio-42  (                    |reset               ) out hi    
+ gpio-51  (                    |VSD_3V3             ) out lo    
+
+gpiochip2: GPIOs 64-95, parent: platform/30220000.gpio, 30220000.gpio:
+ gpio-83  (                    |green-bt            ) out lo    
+
+gpiochip3: GPIOs 96-127, parent: platform/30230000.gpio, 30230000.gpio:
+ gpio-117 (                    |PCIe reset          ) out hi    
+
+gpiochip4: GPIOs 128-159, parent: platform/30240000.gpio, 30240000.gpio:
+ gpio-131 (                    |headphone detect    ) in  hi IRQ
+ gpio-137 (                    |spi_imx             ) out hi  
+</pre></div>
+</div>
+<p>每个GPIO被定义为输入(in)或输出(out)并显示状态为高电平(lo)或低电平(hi)。
+如 pin 15 作为 SD card 的 card-detect，当 SD card 插入时，状态为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gpio</span><span class="o">-</span><span class="mi">15</span>  <span class="p">(</span>                    <span class="o">|</span><span class="n">cd</span>                  <span class="p">)</span> <span class="ow">in</span>  <span class="n">lo</span> <span class="n">IRQ</span>
+</pre></div>
+</div>
+<p>当 SD card 拔出时，状态为：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gpio</span><span class="o">-</span><span class="mi">15</span>  <span class="p">(</span>                    <span class="o">|</span><span class="n">cd</span>                  <span class="p">)</span> <span class="ow">in</span>  <span class="n">hi</span> <span class="n">IRQ</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>控制单个 GPIO<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>i.MX 平台一个GPIO group 有 32 个 GPIO。
+例如GPIO1_3属于第一个 group 的第3pin，因此它的GPIO number是3。
+GPIO4_21 则是 (4-1) * 32+21=117。
+假设一个 GPIO 定义在你一个 device tree中，下面演示如何通过command操作它。</p>
+<p>将 GPIO 导入 userspace 使用：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ echo 117 &gt; /sys/class/gpio/export
+</pre></div>
+</div>
+<p>配置成输出模式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ echo out &gt; /sys/class/gpio/gpio117/direction
+</pre></div>
+</div>
+<p>将 GPIO 拉高：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ echo 1 &gt; /sys/class/gpio/gpio117/value
+</pre></div>
+</div>
+<p>将 GPIO 拉低：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ echo 0 &gt; /sys/class/gpio/gpio117/value
+</pre></div>
+</div>
+<p>配置成输入模式：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ echo in &gt; /sys/class/gpio/gpio117/direction
+</pre></div>
+</div>
+<p>释放 GPIO：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ echo 117 &gt; /sys/class/gpio/unexport
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>内核设备树 GPIO 配置<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<section id="pin">
+<h3>pin 定义文件<a class="headerlink" href="#pin" title="永久链接至标题"></a></h3>
+<p>在kernel/include下可以找到 pin 脚定义文件 pins-imx8mm.h
+如果搜索 GPIO4_IO2可以看到一组与之相同前缀(MX8MM_IOMUXC_SAI1_RXD0)的宏定义。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#define MX8MM_IOMUXC_SAI1_RXD0_SAI1_RX_DATA0                                0x164 0x3CC 0x000 0x0 0x0</span>
+<span class="c1">#define MX8MM_IOMUXC_SAI1_RXD0_SAI5_RX_DATA0                                0x164 0x3CC 0x4D4 0x1 0x1</span>
+<span class="c1">#define MX8MM_IOMUXC_SAI1_RXD0_PDM_DATA0                                    0x164 0x3CC 0x534 0x3 0x1</span>
+<span class="c1">#define MX8MM_IOMUXC_SAI1_RXD0_CORESIGHT_TRACE0                             0x164 0x3CC 0x000 0x4 0x0</span>
+<span class="c1">#define MX8MM_IOMUXC_SAI1_RXD0_GPIO4_IO2                                    0x164 0x3CC 0x000 0x5 0x0</span>
+<span class="c1">#define MX8MM_IOMUXC_SAI1_RXD0_CCMSRCGPCMIX_BOOT_CFG0                       0x164 0x3CC 0x000 0x6 0x0</span>
+<span class="c1">#define MX8MM_IOMUXC_SAI1_RXD0_SIM_M_HADDR17                                0x164 0x3CC 0x000 0x7 0x0</span>
+</pre></div>
+</div>
+<p>根据不同的需求可以将pin脚配置成不同的定义，具体定义可以参考芯片手册。</p>
+</section>
+<section id="id4">
+<h3>在设备树中配置GPIO<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<p>编译 arch/arm64/boot/dts/freescale/fsl-imx8mm-evk.dts，在 iomuxc node 中增加需要的 GPIO pin 脚配置，如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&amp;iomuxc {
+    pinctrl-names = &quot;default&quot;;
+    pinctrl-0 = &lt;&amp;pinctrl_tas5825_pdn&gt;;
+
+    imx8mm-evk  {
+        pinctrl_tas5825_pdn: tas5825_pdn {
+            fsl,pins = &lt;
+                /* Add your GPIO definitions here */ 
+            &gt;;
+        };
+    };
+…
+};
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="upgrade_firmware.html" class="btn btn-neutral float-left" title="升级固件" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="driver_led.html" class="btn btn-neutral float-right" title="LED 使用" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Geniatech.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

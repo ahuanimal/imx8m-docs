@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLUETOOTH 使用 &mdash; i.MX Manual v1 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="prev" title="I2C 使用" href="driver_i2c.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> i.MX Manual
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">上手教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="start.html">入手指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="serial_debugging.html">串口调试</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_firmware.html">升级固件</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">驱动开发</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="driver_gpio.html">GPIO 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_led.html">LED 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_i2c.html">I2C 使用</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">BLUETOOTH 使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Bluetooth 启动信息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">设备识别</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Bluetooth 连接</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">i.MX Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>BLUETOOTH 使用</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/driver_bt.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bluetooth">
+<h1>BLUETOOTH 使用<a class="headerlink" href="#bluetooth" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>Bluetooth 启动信息<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p>系统启动时会打印如下 Bluetooth 信息：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@imx8mmevk</span><span class="p">:</span><span class="o">/</span><span class="c1"># dmesg | grep -i Bluetooth</span>
+<span class="p">[</span>    <span class="mf">1.297069</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">Core</span> <span class="n">ver</span> <span class="mf">2.22</span>
+<span class="p">[</span>    <span class="mf">1.304662</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">device</span> <span class="ow">and</span> <span class="n">connection</span> <span class="n">manager</span> <span class="n">initialized</span>
+<span class="p">[</span>    <span class="mf">1.311046</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">socket</span> <span class="n">layer</span> <span class="n">initialized</span>
+<span class="p">[</span>    <span class="mf">1.315947</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">L2CAP</span> <span class="n">socket</span> <span class="n">layer</span> <span class="n">initialized</span>
+<span class="p">[</span>    <span class="mf">1.321031</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">SCO</span> <span class="n">socket</span> <span class="n">layer</span> <span class="n">initialized</span>
+<span class="p">[</span>    <span class="mf">3.370819</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">UART</span> <span class="n">driver</span> <span class="n">ver</span> <span class="mf">2.3</span>
+<span class="p">[</span>    <span class="mf">3.375287</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">UART</span> <span class="n">protocol</span> <span class="n">H4</span> <span class="n">registered</span>
+<span class="p">[</span>    <span class="mf">3.380435</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">UART</span> <span class="n">protocol</span> <span class="n">BCSP</span> <span class="n">registered</span>
+<span class="p">[</span>    <span class="mf">3.385784</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">UART</span> <span class="n">protocol</span> <span class="n">LL</span> <span class="n">registered</span>
+<span class="p">[</span>    <span class="mf">3.390932</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">UART</span> <span class="n">protocol</span> <span class="n">ATH3K</span> <span class="n">registered</span>
+<span class="p">[</span>    <span class="mf">3.396344</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">UART</span> <span class="n">protocol</span> <span class="n">Three</span><span class="o">-</span><span class="n">wire</span> <span class="p">(</span><span class="n">H5</span><span class="p">)</span> <span class="n">registered</span>
+<span class="p">[</span>    <span class="mf">3.402776</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HCI</span> <span class="n">UART</span> <span class="n">protocol</span> <span class="n">Broadcom</span> <span class="n">registered</span>
+<span class="p">[</span>    <span class="mf">5.046528</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">RFCOMM</span> <span class="n">TTY</span> <span class="n">layer</span> <span class="n">initialized</span>
+<span class="p">[</span>    <span class="mf">5.051424</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">RFCOMM</span> <span class="n">socket</span> <span class="n">layer</span> <span class="n">initialized</span>
+<span class="p">[</span>    <span class="mf">5.056589</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">RFCOMM</span> <span class="n">ver</span> <span class="mf">1.11</span>
+<span class="p">[</span>    <span class="mf">5.060352</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">BNEP</span> <span class="p">(</span><span class="n">Ethernet</span> <span class="n">Emulation</span><span class="p">)</span> <span class="n">ver</span> <span class="mf">1.3</span>
+<span class="p">[</span>    <span class="mf">5.065677</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">BNEP</span> <span class="n">filters</span><span class="p">:</span> <span class="n">protocol</span> <span class="n">multicast</span>
+<span class="p">[</span>    <span class="mf">5.070915</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">BNEP</span> <span class="n">socket</span> <span class="n">layer</span> <span class="n">initialized</span>
+<span class="p">[</span>    <span class="mf">5.075891</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HIDP</span> <span class="p">(</span><span class="n">Human</span> <span class="n">Interface</span> <span class="n">Emulation</span><span class="p">)</span> <span class="n">ver</span> <span class="mf">1.2</span>
+<span class="p">[</span>    <span class="mf">5.081822</span><span class="p">]</span> <span class="n">Bluetooth</span><span class="p">:</span> <span class="n">HIDP</span> <span class="n">socket</span> <span class="n">layer</span> <span class="n">initialized</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>设备识别<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>在系统启动完成后通过指令<code class="docutils literal notranslate"><span class="pre">hciconfig</span></code>查看 Bluetooth 连接状态。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@imx8mmevk</span><span class="p">:</span><span class="o">/</span><span class="c1"># hciconfig hci0 up</span>
+<span class="n">root</span><span class="nd">@imx8mmevk</span><span class="p">:</span><span class="o">/</span><span class="c1"># hciconfig</span>
+<span class="n">hci0</span><span class="p">:</span>   <span class="n">Type</span><span class="p">:</span> <span class="n">Primary</span>  <span class="n">Bus</span><span class="p">:</span> <span class="n">UART</span>
+        <span class="n">BD</span> <span class="n">Address</span><span class="p">:</span> <span class="n">EC</span><span class="p">:</span><span class="mi">2</span><span class="n">E</span><span class="p">:</span><span class="mi">98</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">95</span><span class="p">:</span><span class="mi">1</span><span class="n">C</span>  <span class="n">ACL</span> <span class="n">MTU</span><span class="p">:</span> <span class="mi">1021</span><span class="p">:</span><span class="mi">8</span>  <span class="n">SCO</span> <span class="n">MTU</span><span class="p">:</span> <span class="mi">64</span><span class="p">:</span><span class="mi">1</span>
+        <span class="n">UP</span> <span class="n">RUNNING</span> 
+        <span class="n">RX</span> <span class="nb">bytes</span><span class="p">:</span><span class="mi">1451</span> <span class="n">acl</span><span class="p">:</span><span class="mi">0</span> <span class="n">sco</span><span class="p">:</span><span class="mi">0</span> <span class="n">events</span><span class="p">:</span><span class="mi">81</span> <span class="n">errors</span><span class="p">:</span><span class="mi">0</span>
+        <span class="n">TX</span> <span class="nb">bytes</span><span class="p">:</span><span class="mi">1225</span> <span class="n">acl</span><span class="p">:</span><span class="mi">0</span> <span class="n">sco</span><span class="p">:</span><span class="mi">0</span> <span class="n">commands</span><span class="p">:</span><span class="mi">81</span> <span class="n">errors</span><span class="p">:</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>通过指令<code class="docutils literal notranslate"><span class="pre">hcitool</span></code>查看当前可用的 Bluetooth MAC 地址。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@imx8mmevk</span><span class="p">:</span><span class="o">/</span><span class="c1"># hcitool dev</span>
+<span class="n">Devices</span><span class="p">:</span>
+        <span class="n">hci0</span>    <span class="n">EC</span><span class="p">:</span><span class="mi">2</span><span class="n">E</span><span class="p">:</span><span class="mi">98</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">95</span><span class="p">:</span><span class="mi">1</span><span class="n">C</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Bluetooth 连接<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<p>通过指令<code class="docutils literal notranslate"><span class="pre">bluetoothctl</span></code>可以管理 Bluetooth 的连接操作。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># bluetoothctl</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># power on</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># agent off</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># agent on</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># default-agent</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># pairable on</span>
+
+<span class="n">Push</span> <span class="n">the</span> <span class="n">connect</span> <span class="n">button</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">device</span>
+
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># scan on</span>
+
+<span class="n">Copy</span> <span class="n">mac</span> <span class="n">address</span>
+
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># scan off</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># pair &lt;mac address&gt;</span>
+
+<span class="n">Approve</span> <span class="n">pairing</span> <span class="n">on</span> <span class="n">Device</span> <span class="k">if</span> <span class="n">required</span>
+
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># trust &lt;mac address&gt;</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># connect &lt;mac address&gt;</span>
+<span class="p">[</span><span class="n">bluetooth</span><span class="p">]</span><span class="c1"># quit</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="driver_i2c.html" class="btn btn-neutral float-left" title="I2C 使用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Geniatech.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

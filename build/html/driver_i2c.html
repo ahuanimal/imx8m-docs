@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I2C 使用 &mdash; i.MX Manual v1 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="BLUETOOTH 使用" href="driver_bt.html" />
+    <link rel="prev" title="LED 使用" href="driver_led.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> i.MX Manual
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">上手教程</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="start.html">入手指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="serial_debugging.html">串口调试</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade_firmware.html">升级固件</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">驱动开发</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="driver_gpio.html">GPIO 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_led.html">LED 使用</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">I2C 使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">前言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">定义和注册 I2C 设备</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">定义和注册 I2C 驱动</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">定义 I2C 驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">注册 I2C 驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">通过 I2C 收发数据</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="driver_bt.html">BLUETOOTH 使用</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">i.MX Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>I2C 使用</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/driver_i2c.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="i2c">
+<h1>I2C 使用<a class="headerlink" href="#i2c" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>前言<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p>本文主要描述如何在该开发板上配置 I2C，配置 I2C 可分为两大步骤：</p>
+<ul class="simple">
+<li><p>定义和注册 I2C 设备</p></li>
+<li><p>定义和注册 I2C 驱动</p></li>
+</ul>
+<p>下面以配置 AM1805 为例。</p>
+</section>
+<section id="id2">
+<h2>定义和注册 I2C 设备<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>在注册I2C设备时，需要结构体 i2c_client 来描述 I2C 设备。然而在标准Linux中，用户只需要提供相应的 I2C 设备信息，Linux就会根据所提供的信息构造 i2c_client 结构体。</p>
+<p>用户所提供的 I2C 设备信息以节点的形式写到 dts 文件中，如下所示：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&amp;</span><span class="n">i2c2</span> <span class="p">{</span>
+        <span class="n">clock</span><span class="o">-</span><span class="n">frequency</span> <span class="o">=</span> <span class="o">&lt;</span><span class="mi">400000</span><span class="o">&gt;</span><span class="p">;</span>
+        <span class="n">pinctrl</span><span class="o">-</span><span class="n">names</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">;</span>
+        <span class="n">pinctrl</span><span class="o">-</span><span class="mi">0</span> <span class="o">=</span> <span class="o">&lt;&amp;</span><span class="n">pinctrl_i2c2</span><span class="o">&gt;</span><span class="p">;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;okay&quot;</span><span class="p">;</span>
+
+        <span class="n">rtc_am1805_bridge</span><span class="p">:</span><span class="n">am1805_bridge</span><span class="o">@</span><span class="mi">69</span><span class="p">{</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;okay&quot;</span><span class="p">;</span>
+                <span class="n">reg</span> <span class="o">=</span> <span class="o">&lt;</span><span class="mh">0x69</span><span class="o">&gt;</span><span class="p">;</span>
+                <span class="n">compatible</span> <span class="o">=</span> <span class="s2">&quot;qcom,rtc_am1805&quot;</span><span class="p">;</span>
+                <span class="n">dev_name</span> <span class="o">=</span> <span class="s2">&quot;rtc_am1805&quot;</span><span class="p">;</span>
+                <span class="n">init_date</span> <span class="o">=</span> <span class="s2">&quot;2015/01/01&quot;</span><span class="p">;</span>
+        <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>定义和注册 I2C 驱动<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<section id="id4">
+<h3>定义 I2C 驱动<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<p>在定义 I2C 驱动之前，用户首先要定义变量 of_device_id 和 i2c_device_id 。of_device_id 用于在驱动中调用dts文件中定义的设备信息，其定义如下所示：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">const</span> <span class="n">struct</span> <span class="n">of_device_id</span> <span class="n">meson_rtc_dt_match</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">{</span> <span class="o">.</span><span class="n">compatible</span> <span class="o">=</span> <span class="s2">&quot;qcom,rtc_am1805&quot;</span><span class="p">,</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">},</span>
+        <span class="p">{},</span>
+<span class="p">};</span>
+
+<span class="n">MODULE_DEVICE_TABLE</span><span class="p">(</span><span class="n">of</span><span class="p">,</span> <span class="n">meson_rtc_dt_match</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>定义变量 i2c_device_id：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="n">const</span> <span class="n">struct</span> <span class="n">i2c_device_id</span> <span class="n">am1805_i2c_id</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">{</span> <span class="s2">&quot;qcom,rtc_am1805&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">MODULE_DEVICE_TABLE</span><span class="p">(</span><span class="n">i2c</span><span class="p">,</span> <span class="n">am1805_i2c_id</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>i2c_driver 如下所示：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">i2c_driver</span> <span class="n">rtc_am1805_driver</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;rtc_am1805&quot;</span><span class="p">,</span>
+                <span class="o">.</span><span class="n">of_match_table</span> <span class="o">=</span> <span class="n">meson_rtc_dt_match</span><span class="p">,</span>
+                <span class="o">.</span><span class="n">pm</span>     <span class="o">=</span> <span class="o">&amp;</span><span class="n">rtc_am1805_pm_ops</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="o">.</span><span class="n">probe</span> <span class="o">=</span> <span class="n">rtc_am1805_probe</span><span class="p">,</span>
+        <span class="o">.</span><span class="n">remove</span> <span class="o">=</span> <span class="n">rtc_am1805_remove</span><span class="p">,</span>
+        <span class="o">.</span><span class="n">shutdown</span> <span class="o">=</span> <span class="n">rtc_am1805_shutdown</span><span class="p">,</span>
+        <span class="o">.</span><span class="n">id_table</span> <span class="o">=</span> <span class="n">am1805_i2c_id</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>注：变量id_table指示该驱动所支持的设备。</p>
+</section>
+<section id="id5">
+<h3>注册 I2C 驱动<a class="headerlink" href="#id5" title="永久链接至标题"></a></h3>
+<p>使用i2c_add_driver函数注册 I2C 驱动。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span>  <span class="n">__init</span> <span class="n">rtc_am1805_init</span><span class="p">(</span><span class="n">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">RTC_DBG</span><span class="p">(</span><span class="n">RTC_DBG_VAL</span><span class="p">,</span> <span class="s2">&quot;rtc_am1805 --rtc_am1805_init</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">i2c_add_driver</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rtc_am1805_driver</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在调用 i2c_add_driver 注册 I2C 驱动时，会遍历 I2C 设备，如果该驱动支持所遍历到的设备，则会调用该驱动的 probe 函数。</p>
+</section>
+<section id="id6">
+<h3>通过 I2C 收发数据<a class="headerlink" href="#id6" title="永久链接至标题"></a></h3>
+<p>在注册好 I2 C 驱动后，即可进行 I2C 通讯。</p>
+<ul class="simple">
+<li><p>向从机发送信息</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">rtc_am1805_i2c_write</span><span class="p">(</span><span class="n">unsigned</span> <span class="n">char</span> <span class="o">*</span><span class="n">buff</span><span class="p">,</span> <span class="n">__u32</span> <span class="n">addr</span><span class="p">,</span> <span class="n">unsigned</span> <span class="nb">len</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nb">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">unsigned</span> <span class="n">char</span> <span class="o">*</span><span class="n">kBuf</span><span class="p">;</span>
+        <span class="nb">int</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">struct</span> <span class="n">i2c_msg</span> <span class="n">msg</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span> <span class="o">==</span> <span class="n">NULL</span><span class="p">){</span>
+                <span class="n">pr_err</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> i2c client is null.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="vm">__func__</span><span class="p">);</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">kBuf</span> <span class="o">=</span> <span class="n">kmalloc</span><span class="p">(</span><span class="nb">len</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">GFP_KERNEL</span><span class="p">);</span>
+        <span class="n">memcpy</span><span class="p">(</span><span class="n">kBuf</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">buff</span><span class="p">,</span> <span class="nb">len</span><span class="p">);</span>
+        <span class="n">kBuf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">addr</span><span class="o">&amp;</span><span class="mh">0xFF</span><span class="p">;</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">addr</span> <span class="o">=</span> <span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span><span class="o">-&gt;</span><span class="n">addr</span><span class="p">;</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">len</span> <span class="o">=</span> <span class="nb">len</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">buf</span> <span class="o">=</span> <span class="n">kBuf</span><span class="p">;</span>
+
+        <span class="n">pr_debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:i2c write register</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="vm">__func__</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="nb">len</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+            <span class="n">pr_debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> i2c write </span><span class="si">%02x</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="vm">__func__</span><span class="p">,</span><span class="n">kBuf</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">i2c_transfer</span><span class="p">(</span><span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span><span class="o">-&gt;</span><span class="n">adapter</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">msg</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">pr_err</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: i2c transfer failed ,ret:</span><span class="si">%d</span><span class="s2"> .</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="vm">__func__</span><span class="p">,</span><span class="n">res</span><span class="p">);</span>
+        <span class="k">else</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="n">kfree</span><span class="p">(</span><span class="n">kBuf</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>向从机读取信息</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">static</span> <span class="nb">int</span> <span class="n">rtc_am1805_i2c_read</span><span class="p">(</span><span class="n">unsigned</span> <span class="n">char</span> <span class="o">*</span><span class="n">buff</span><span class="p">,</span> <span class="n">u8</span> <span class="n">reg</span><span class="p">,</span> <span class="n">unsigned</span> <span class="nb">len</span><span class="p">)</span>
+<span class="p">{</span>       
+        <span class="nb">int</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">struct</span> <span class="n">i2c_msg</span> <span class="n">msgs</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> 
+        <span class="n">unsigned</span> <span class="n">char</span> <span class="n">ctrBuf</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{(</span><span class="n">reg</span><span class="o">&amp;</span><span class="mh">0xff</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span> <span class="o">==</span> <span class="n">NULL</span><span class="p">){</span>
+                <span class="n">pr_err</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> :i2c client is null</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="vm">__func__</span><span class="p">);</span>
+                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">addr</span>    <span class="o">=</span> <span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span><span class="o">-&gt;</span><span class="n">addr</span><span class="p">;</span>
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flags</span>   <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">len</span>     <span class="o">=</span> <span class="n">sizeof</span><span class="p">(</span><span class="n">reg</span><span class="p">);</span>
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">buf</span>     <span class="o">=</span> <span class="o">&amp;</span><span class="n">reg</span><span class="p">;</span>
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">addr</span>    <span class="o">=</span> <span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span><span class="o">-&gt;</span><span class="n">addr</span><span class="p">;</span>
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flags</span>   <span class="o">=</span> <span class="n">I2C_M_RD</span><span class="p">;</span>
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">len</span>     <span class="o">=</span> <span class="nb">len</span><span class="p">;</span>
+        <span class="n">msgs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">buf</span>     <span class="o">=</span> <span class="n">buff</span><span class="p">;</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="n">i2c_transfer</span><span class="p">(</span><span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span><span class="o">-&gt;</span><span class="n">adapter</span><span class="p">,</span> <span class="n">msgs</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">){</span>
+                <span class="n">pr_err</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: i2c transfer failed(</span><span class="si">%d</span><span class="s2">), addr:</span><span class="si">%x</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="vm">__func__</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">rtc_info</span><span class="o">-&gt;</span><span class="n">pI2cClient</span><span class="o">-&gt;</span><span class="n">addr</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>  
+                <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>注:msgs[0] 是要向从机发送的信息，告诉从机主机要读取信息。msgs[1] 是主机向从机读取到的信息。</p>
+<p>至此，主机可以使用函数 rtc_am1805_i2c_read 和 rtc_am1805_i2c_write 和从机进行通讯。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="driver_led.html" class="btn btn-neutral float-left" title="LED 使用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="driver_bt.html" class="btn btn-neutral float-right" title="BLUETOOTH 使用" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Geniatech.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

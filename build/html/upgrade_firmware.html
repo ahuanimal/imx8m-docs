@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>升级固件 &mdash; i.MX Manual v1 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="GPIO 使用" href="driver_gpio.html" />
+    <link rel="prev" title="串口调试" href="serial_debugging.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> i.MX Manual
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">上手教程</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="start.html">入手指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="serial_debugging.html">串口调试</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">升级固件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">前言</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">准备工作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nxp-usb">安装NXP USB驱动</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">连接设备</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">烧写固件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">常见问题</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">驱动开发</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="driver_gpio.html">GPIO 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_led.html">LED 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_i2c.html">I2C 使用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driver_bt.html">BLUETOOTH 使用</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">i.MX Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>升级固件</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/upgrade_firmware.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>升级固件<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="id2">
+<h2>前言<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>本文介绍了如何将主机上的固件文件，通过USB数据线，烧录到开发板的EMMC中。 升级时，需要根据主机操作系统和固件类型来选择合适的升级方式。</p>
+</section>
+<section id="id3">
+<h2>准备工作<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<ul class="simple">
+<li><p>NXP IMX8M 开发板</p></li>
+<li><p>烧录镜像</p></li>
+<li><p>电脑主机</p></li>
+<li><p>匹配的USB线</p></li>
+</ul>
+<section id="nxp-usb">
+<h3>安装NXP USB驱动<a class="headerlink" href="#nxp-usb" title="永久链接至标题"></a></h3>
+<p>下载<a class="reference external" href="https://www.driverscape.com/download/hid-compliant-vendor-defined-device">USB驱动</a>然后进行USB驱动安装</p>
+</section>
+<section id="id4">
+<h3>连接设备<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<p>根据以下方法进入升级模式</p>
+<ul class="simple">
+<li><p>将sw切换到烧录模式</p></li>
+<li><p>通过usb先连接电脑和开发板</p></li>
+<li><p>开发板上电</p></li>
+</ul>
+<p>主机应该会提示发现新硬件并配置驱动。打开设备管理器，会见到新设备出现，如下图。如果没有，则需要返回上一步重新安装驱动。</p>
+<p><img alt="winusb 图标" src="_images/win_usb.png" /></p>
+</section>
+<section id="id5">
+<h3>烧写固件<a class="headerlink" href="#id5" title="永久链接至标题"></a></h3>
+<p>根据以下步骤开始烧录</p>
+<ul class="simple">
+<li><p>从网上获取<a class="reference external" href="https://mega.nz/file/135ngAZZ#O9gxgD6Rx5_-ok0dx3QkGLtpZ_COEVsCY0FibkTcRUo">镜像地址</a>或者自行编译镜像</p></li>
+<li><p>解压镜像包</p></li>
+<li><p>双击imx-yocto-flash.bat开始烧录，</p></li>
+</ul>
+<p>烧录进程如下图。</p>
+<p><img alt="winflash 图标" src="_images/win_flash.png" /></p>
+<p>烧录完成后切换为启动模式重新上电开机。</p>
+</section>
+</section>
+<section id="id6">
+<h2>常见问题<a class="headerlink" href="#id6" title="永久链接至标题"></a></h2>
+<ul class="simple">
+<li><p>无法进入烧录模式</p></li>
+<li><p>烧录报错</p></li>
+<li><p>无法开机</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="serial_debugging.html" class="btn btn-neutral float-left" title="串口调试" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="driver_gpio.html" class="btn btn-neutral float-right" title="GPIO 使用" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, Geniatech.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
